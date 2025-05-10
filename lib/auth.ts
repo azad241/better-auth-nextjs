@@ -1,8 +1,9 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import * as schema from "@/auth-schema";
-import db from "@/app/api/database/db"; 
+import db from "@/app/api/database/db";
 import { nextCookies } from "better-auth/next-js";
+import { sendEmail } from "./authMailer";
 
 // const db = './mydb.db'
 export const auth = betterAuth({
@@ -10,15 +11,26 @@ export const auth = betterAuth({
         provider: "sqlite",
         schema
     }),
-    emailAndPassword: {  
-        enabled: true
+    emailAndPassword: {
+        enabled: true,
+        sendResetPassword: async ({ user, url }) => {
+            await sendEmail({
+                to: user.email,
+                subject: "Reset your password",
+                message: `Click the link to reset your password: ${url}`,
+            });
+        },
+        resetPasswordTokenExpiresIn: 3600,
     },
-    socialProviders: { 
-        github: { 
-           clientId: process.env.GITHUB_CLIENT_ID as string, 
-           clientSecret: process.env.GITHUB_CLIENT_SECRET as string, 
-        }, 
-    }, 
+    socialProviders: {
+        github: {
+            clientId: process.env.GITHUB_CLIENT_ID as string,
+            clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+        },
+    },
+
+
+
     plugins: [nextCookies()]
 })
 
