@@ -7,9 +7,11 @@ function SignOutButton({ className }: { className?: string }) {
     const router = useRouter();
 
     async function handleClick() {
-        await signOut().then(() => {
-            router.push("/signin");
-        });
+        await signOut({
+          fetchOptions: {
+            onSuccess: () => router.push("/signin"),
+          }
+        })
     }
   return (
     <div className={className}>

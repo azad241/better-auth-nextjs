@@ -150,7 +150,15 @@ const data = {
   ],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+interface userFromSession{
+  name: string
+  email: string,
+  emailVerified: boolean,
+  image?: string
+}
+
+export function AppSidebar({ user, ...props }: {user: userFromSession} & React.ComponentProps<typeof Sidebar>) {
+  console.log('user: ', user)
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -174,8 +182,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   )
 }
+
+

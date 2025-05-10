@@ -14,6 +14,13 @@ import data from "./data.json"
 import { headers } from "next/headers"
 import { auth } from "@/lib/auth"
 
+interface userFromSession{
+  name: string
+  email: string,
+  emailVerified: boolean,
+  image?: string
+}
+
 export default async function Page() {
 
    const session = await auth.api.getSession({
@@ -32,7 +39,7 @@ export default async function Page() {
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
+      <AppSidebar variant="inset" user={session.user as userFromSession} />
       <SidebarInset>
         <SiteHeader />
         <div className="flex flex-1 flex-col">
