@@ -12,7 +12,7 @@ import {
 
 import data from "./data.json"
 import { headers } from "next/headers"
-import { auth } from "@/lib/auth"
+import { auth } from "@/lib/auth/auth"
 
 interface userFromSession{
   name: string

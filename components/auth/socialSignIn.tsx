@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Button } from "../ui/button";
-import { signIn } from "@/lib/authClient";
+import { signIn } from "@/lib/auth/authClient";
 
 export default function SocialSignIn({provider,children,}: {provider: Provider; children: React.ReactNode;}) {
     async function handleClick() {

@@ -7,17 +7,20 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { forgetPassword } from '@/lib/authClient'
+import { forgetPassword } from '@/lib/auth/authClient'
 
 
 export default function PasswordResetComponent() {
     const [email, setEmail] = useState('')
     const [sent, setSent] = useState(0)
+    const [loading, setLoading] = useState(false)
 
     async function handleReset() {
+        setLoading(true)
         const isFound = await fetch(`/api/get-user?email=${email}`)
         if(!isFound.ok){
-            toast.error('An error occured')
+            toast.error('Email not found')
+            setLoading(false)
             return
         }
         const data : {email: string, name: string} = await isFound.json()
@@ -27,12 +30,19 @@ export default function PasswordResetComponent() {
             const {error} = await forgetPassword({email: data.email, redirectTo: `${window.location.origin}/password-reset/next`})
             if(error){
                 toast.error('Something went wrong')
+                setLoading(false)
                 return
             }
-            else toast.success('Email sent, Please check your inbox')
+            else{
+                toast.success('Email sent, Please check your inbox')
+                setLoading(false)
+                return
+            }
         }
         else{
             toast.error('Email not found')
+            setLoading(false)
+            return
         }
     }
 
@@ -73,9 +83,9 @@ export default function PasswordResetComponent() {
 
                         <Button
                             onClick={handleReset}
-                            disabled={sent > 2}
+                            disabled={sent > 2 || loading}
                             className="w-full">
-                            {sent > 2 ? 'Limit reached, try again later' : sent > 0 ? 'Send Reset Link Again' : 'Send Reset Link'}
+                            {loading ? 'Loading...' : sent > 2 ? 'Limit reached, try again later' : sent > 0 ? 'Send Reset Link Again' : 'Send Reset Link'}
                         </Button>
                     </div>
 

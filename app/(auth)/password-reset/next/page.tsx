@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation';
-import { resetPassword } from '@/lib/authClient';
+import { resetPassword } from '@/lib/auth/authClient';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import Link from 'next/link';
@@ -20,6 +20,7 @@ function ResetPassword() {
     const [message, setMessage] = useState('')
     const [newPassword, setNewPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         if (!token)
@@ -29,19 +30,28 @@ function ResetPassword() {
         toast.error(message)
     }, [message])
     async function handleResetPassword() {
-        if (!token) {
-            setMessage("Token not found or invalid")
-        }
+        setLoading(true)
         if (newPassword !== confirmPassword) {
             setMessage('Passwords do not match')
+            setLoading(false)
+            return
+        }
+        if (!token) {
+            setMessage("Token not found or invalid")
+            setLoading(false)
+            return
         }
         const { error } = await resetPassword({ token: token!, newPassword })
         if (error) {
             setMessage(error.message || 'Something went wrong')
+            setLoading(false)
+            return
         }
         else {
             setMessage("Password reset successful! You can now sign in.");
             setTimeout(() => router.push("/signin"), 3000);
+            setLoading(false)
+            return
         }
     }
 
@@ -75,7 +85,7 @@ function ResetPassword() {
                                 disabled={!token}
                                 type="password"
                                 onInput={(e) => setNewPassword(e.currentTarget.value)}
-                                required
+                                required={true}
                                 name="password"
                                 id="password"
                                 placeholder="*********"
@@ -92,7 +102,7 @@ function ResetPassword() {
                                 disabled={!token}
                                 type="password"
                                 onInput={(e) => setConfirmPassword(e.currentTarget.value)}
-                                required
+                                required={true}
                                 name="password"
                                 id="password"
                                 placeholder="*********"
@@ -101,9 +111,9 @@ function ResetPassword() {
 
                         <Button
                             onClick={handleResetPassword}
-                            disabled={!token}
+                            disabled={!token || loading || !newPassword || !confirmPassword}
                             className="w-full">
-                            Reset
+                            {loading ? "Loading..." : "Reset Password"}
                         </Button>
                     </div>
 

@@ -2,7 +2,7 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { handle } from 'hono/vercel'
-import {auth} from '@/lib/auth'
+import {auth} from '@/lib/auth/auth'
 import { findUserByEmail } from '../database/crud'
 
 
@@ -26,6 +26,7 @@ app.get('/hello', async (c) => {
   })
 })
 
+//auth start
 app.get('/get-user', async (c) => {
   const email = c.req.query('email') || '';
   const data = await findUserByEmail(email);
@@ -34,12 +35,11 @@ app.get('/get-user', async (c) => {
   }
   return c.json({email: '', name: ''}, 404);
 });
-
-// app.on(["POST", "GET"], "/auth/**", (c) => auth.handler(c.req.raw));
 app.all('/auth/**', async (c) => {
   const res = await auth.handler(c.req.raw);
   return new Response(res.body, res);
 });
+//auth end
 
 
 

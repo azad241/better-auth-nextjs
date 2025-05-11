@@ -7,7 +7,7 @@ import { useEffect, useActionState, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { signUpAction } from '@/lib/authActions'
+import { signUpAction } from '@/lib/auth/authActions'
 import SocialSignIn from './socialSignIn'
 
 export default function SignUpComponent() {
