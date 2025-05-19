@@ -17,7 +17,7 @@ export default function PasswordResetComponent() {
 
     async function handleReset() {
         setLoading(true)
-        const isFound = await fetch(`/api/get-user?email=${email}`)
+        const isFound = await fetch(`/api/auth/get-user?email=${email}`)
         if(!isFound.ok){
             toast.error('Email not found')
             setLoading(false)
